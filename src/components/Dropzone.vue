@@ -56,9 +56,9 @@ export default {
 
 <style scoped>
 #dropzone {
-  border: 2px dashed var(--bs-gray-300);
+  border: 2px dashed rgb(211,211,211);
   height: 150px;
-  width: 300px;
+  width: 100%;
   border-radius: 5px;
 }
 
@@ -81,7 +81,7 @@ export default {
 }
 #preview img {
   position: absolute;
-  max-width: 290px;
+  max-width: 80%;
   max-height: 140px;
   width: auto;
   height: auto;
@@ -91,9 +91,9 @@ export default {
   right: 5px;
   top: 5px;
   border-radius: 50%;
+  background: none;
 }
 #preview button:hover {
-  background-color: var(--bs-gray-300);
-  opacity: .5;
+  background-color: rgb(0,0,0,.1);
 }
 </style>

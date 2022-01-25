@@ -1,8 +1,15 @@
 <template>
-  <form id="front-cover-form" @submit="onSubmit">
+  <form @submit="onSubmit">
     <div class="toolbar">
       <span class="text-muted">This is my header</span>
       <div>
+        <button
+          @click="togglePreview"
+          type="button" class="btn btn-primary">Preview</button>
+                  <!-- <button
+          @click="togglePreview"
+          :disabled="!pdfPreview"
+          type="button" class="btn btn-primary">Preview</button> -->
         <button @click="onSave" type="button" class="btn btn-primary">Save</button>
         <input type="submit" class="btn btn-primary" />
       </div>
@@ -35,17 +42,24 @@
         <textarea name="frontText" class="form-control" rows="4" v-model="frontText" />
       </div>
     </div>
+    
+    <Modal v-model="showPreview" @confirm="confirm" @cancel="cancel" showFooter="false" id="preview">
+      <template v-slot:title>Preview</template>
+      <embed id="pdfviewer" v-if="pdfPreview && showPreview" :src="pdfPreview" type="application/pdf" />
+    </Modal>
   </form>
 </template>
 
 <script>
 import Dropzone from './Dropzone.vue';
-import { generatePdf } from '../api';
+import Modal from './Modal';
+import { generatePdf } from '../services/api';
 
 export default {
   name: 'FrontCoverForm',
   components: {
     Dropzone,
+    Modal,
   },
   data() {
     return {
@@ -53,12 +67,24 @@ export default {
       dateText: '',
       backText: '',
       images: {},
+      pdfPreview: undefined,
+      showPreview: false,
     }
   },
   methods: {
+    async togglePreview(e) {
+      e.preventDefault();
+      this.showPreview = !this.showPreview;
+    },
     async onSave(e) {
       e.preventDefault();
       console.log('save');
+    },
+    confirm(close) {
+      close();
+    },
+    cancel(close) {
+      close();
     },
     async setImage(file, name) {
       if (file) {
@@ -83,13 +109,38 @@ export default {
 
       // TODO: images validation
 
-      await generatePdf(this.frontText, this.dateText, this.images);
+      const arrayBuffer = await generatePdf(this.frontText, this.dateText, this.images);
+      this.pdfPreview = URL.createObjectURL(new Blob([arrayBuffer], {
+        type: "application/pdf"
+      }));
+      this.showPreview = true;
     }
   },
 }
 </script>
 
 <style scoped>
+main {
+  position: relative;
+}
+#form {
+  position: absolute;
+  width: 100%;
+}
+
+::v-deep(#preview .v-modal) {
+  width: 100%;
+  padding: 0;
+}
+::v-deep(#preview .v-modal-title) {
+  padding: 1rem;
+}
+
+embed {
+  width: 100%;
+  height: 80vh;
+}
+
 .toolbar {
   display: flex;
   width: 100%;
