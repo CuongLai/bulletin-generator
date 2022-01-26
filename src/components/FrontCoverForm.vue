@@ -43,9 +43,19 @@
       </div>
     </div>
     
-    <Modal v-model="showPreview" @confirm="confirm" @cancel="cancel" showFooter="false" id="preview">
+    <Modal v-model="showPreview" @confirm="confirm" @cancel="cancel" :showFooter="false" id="preview">
       <template v-slot:title>Preview</template>
-      <embed id="pdfviewer" v-if="pdfPreview && showPreview" :src="pdfPreview" type="application/pdf" />
+      <template v-slot:toolbar-buttons>
+        <a
+          :href="pdfPreview"
+          :download="`bia bao ${new Date().getMonth() + 1}-${new Date().getFullYear()}`"
+          id="download-button"
+          class="btn icon-button"
+        >
+          <i class="fas fa-download"></i>
+        </a>
+      </template>
+      <PdfViewer v-if="pdfPreview" :pdfSrc="pdfPreview" />
     </Modal>
   </form>
 </template>
@@ -53,6 +63,7 @@
 <script>
 import Dropzone from './Dropzone.vue';
 import Modal from './Modal';
+import PdfViewer from './PdfViewer.vue';
 import { generatePdf } from '../services/api';
 
 export default {
@@ -60,6 +71,7 @@ export default {
   components: {
     Dropzone,
     Modal,
+    PdfViewer,
   },
   data() {
     return {
@@ -78,7 +90,6 @@ export default {
     },
     async onSave(e) {
       e.preventDefault();
-      console.log('save');
     },
     confirm(close) {
       close();
@@ -92,7 +103,6 @@ export default {
       } else {
         delete this.images[name];
       }
-      console.log(this.images);
     },
     async onSubmit(e) {
       e.preventDefault();
@@ -114,7 +124,7 @@ export default {
         type: "application/pdf"
       }));
       this.showPreview = true;
-    }
+    },
   },
 }
 </script>
@@ -128,17 +138,17 @@ main {
   width: 100%;
 }
 
-::v-deep(#preview .v-modal) {
-  width: 100%;
+::v-deep(.v-modal) {
   padding: 0;
+  width: 100%;
+  height: 100%;
 }
-::v-deep(#preview .v-modal-title) {
+::v-deep(.v-modal-title) {
   padding: 1rem;
 }
-
-embed {
-  width: 100%;
-  height: 80vh;
+::v-deep(.v-modal-content) {
+  height: 100%;
+  background-color: lightgray;
 }
 
 .toolbar {
@@ -153,5 +163,9 @@ embed {
 }
 .toolbar button, input {
   margin-right: 10px;
+}
+
+#download-button {
+  color: black;
 }
 </style>

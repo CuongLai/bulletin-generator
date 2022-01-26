@@ -14,7 +14,7 @@ export class PdfService {
     async setUpPdf() {
         this.pdfDoc = await PDFDocument.create();
         this.pdfDoc.registerFontkit(fontkit);
-        this.font = await this.pdfDoc.embedFont(fs.readFileSync(path.join(__static, '/Courgette Regular Mac.ttf')));
+        this.font = await this.pdfDoc.embedFont(fs.readFileSync(path.join(__static, '/assets/Courgette Regular Mac.ttf')));
     }
 
     async setUpPage() {
@@ -74,17 +74,13 @@ export class PdfService {
             const sectionDims = validateAndCalculateSectionDims(section);
             if (section.backgroundColor) this.drawBackground(side, section, sectionDims);
 
-                console.log(file);
             const fileExtension = file.name.split('.').reverse()[0];
             const fileBuffer = await this.readFileAsync(file);
-            console.log(fileBuffer);
             let image = await this.pdfDoc[fileExtension === 'jpg' ? 'embedJpg' : 'embedPng'](fileBuffer);
 
             let scale = 1;
             let imageDims;
             if (fit) {
-                console.log('huh', file);
-                console.log(file.name);
                 const fileName = file.name;
                 const croppedFilePath = `./temp/${fileName}`;
 
@@ -116,15 +112,11 @@ export class PdfService {
                         cropOptions.top = Math.floor((resizedImageHeight / 2) - (cropOptions.height / 2));
                     }
 
-                    console.log(typeof fileBuffer);
                     const uint8 = new Uint8Array(fileBuffer);
                     const test = await sharp(uint8)
                         .resize(resizeWidth, resizeHeight) // maintains aspect ratio
                         .extract(cropOptions)
                         .toBuffer();
-                    console.log(test);
-                        // .toBuffer();
-                        // .toFile(croppedFilePath);
                     image = await this.pdfDoc[fileExtension === 'jpg' ? 'embedJpg' : 'embedPng'](test);
                     imageDims = image.scale(scale);
                 } else if (fit === fitOptions.fill) {
@@ -140,7 +132,6 @@ export class PdfService {
                     );
                 } else if (widthScale) {
                     scale = (sectionDims.width * widthScale) / image.width;
-                    console.log('scale ', scale, (config.pageWidth / 2) * widthScale, image.width);
                 }
                 imageDims = image.scale(scale);
             }

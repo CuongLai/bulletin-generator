@@ -6,7 +6,9 @@
     </div>
     <div v-else id="preview">
       <img v-bind:src="previewSrc" />
-      <button type="button" class="btn" @click="clearImagePreview"><i class="fas fa-times"></i></button>
+      <button type="button" class="btn icon-button" @click="clearImagePreview">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -36,7 +38,7 @@ export default {
       const reader = new FileReader();
       const self = this;
       reader.addEventListener('load', function () {
-        self.setImagePreview(reader.result, acceptFiles[0]);
+        self.setImagePreview(reader.result);
       }, false);
       reader.readAsDataURL(acceptFiles[0]);
       this.$emit('set-image-src', acceptFiles[0], this.name);
@@ -90,10 +92,5 @@ export default {
   position: absolute;
   right: 5px;
   top: 5px;
-  border-radius: 50%;
-  background: none;
-}
-#preview button:hover {
-  background-color: rgb(0,0,0,.1);
 }
 </style>

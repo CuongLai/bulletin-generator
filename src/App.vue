@@ -15,4 +15,19 @@ export default {
 </script>
 
 <style>
+.icon-button {
+  border-radius: 50%;
+  background: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon-button:hover {
+  background-color: rgb(0,0,0,.1);
+}
+.icon-button i {
+  text-align: center;
+}
 </style>

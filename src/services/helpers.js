@@ -1,7 +1,6 @@
 const { config } = require('./config');
 
 function validateAndCalculateSectionDims(section) {
-    console.log(config);
     let sectionWidth = config.pageWidth / 2;
     let sectionHeight = config.pageHeight;
 
@@ -9,7 +8,6 @@ function validateAndCalculateSectionDims(section) {
 
     if (section.widthScale) {
         if (section.widthScale > 1 || section.widthScale < 0) throw new Error('section.widthScale must be between 0 and 1.');
-        console.log('here');
         sectionWidth = section.widthScale * (config.pageWidth / 2);
     } else if (section.width) {
         if (section.width > config.pageWidth) throw new Error(`section.width cannot be larger than ${sectionWidth}.`);
