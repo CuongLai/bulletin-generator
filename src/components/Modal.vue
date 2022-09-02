@@ -85,6 +85,7 @@ export default {
   min-height: 1rem;
   overflow: auto;
   border-radius: 0 0 10px 10px;
+  flex: 1;
 }
 
 .v-modal-actions {

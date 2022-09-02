@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div id="nav">
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/create">Create</router-link>
-    </div>
+      <router-link to="/edit">Edit</router-link>
+    </div> -->
     <router-view />
   </div>
 </template>
@@ -15,14 +15,15 @@ export default {
 </script>
 
 <style>
+button {
+  box-shadow: none !important;
+}
 .icon-button {
   border-radius: 50%;
   background: none;
   width: 40px;
   height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 0;
 }
 .icon-button:hover {
   background-color: rgb(0,0,0,.1);

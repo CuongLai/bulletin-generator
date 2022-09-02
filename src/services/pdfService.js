@@ -6,7 +6,7 @@ import * as path from 'path';
 // import sharp from 'sharp';
 const sharp = require('sharp');
 import { validateAndCalculateSectionDims } from './helpers';
-import { config } from './config';
+import { constants } from './config';
 import { fitOptions } from './enums';
 import { Buffer } from 'buffer';
 
@@ -18,11 +18,7 @@ export class PdfService {
     }
 
     async setUpPage() {
-        this.page = this.pdfDoc.addPage([config.pageWidth, config.pageHeight]) 
-
-        // TODO: remove center line
-        this.page.moveTo(config.pageWidth / 2, 2500);
-        this.page.drawSvgPath('M 0,0 l 0,2450');
+        this.page = this.pdfDoc.addPage([constants.pageWidth, constants.pageHeight]) 
     }
 
     // determines which dimension will reach max first to get scale
@@ -74,6 +70,7 @@ export class PdfService {
             const sectionDims = validateAndCalculateSectionDims(section);
             if (section.backgroundColor) this.drawBackground(side, section, sectionDims);
 
+            console.log(file.name);
             const fileExtension = file.name.split('.').reverse()[0];
             const fileBuffer = await this.readFileAsync(file);
             let image = await this.pdfDoc[fileExtension === 'jpg' ? 'embedJpg' : 'embedPng'](fileBuffer);
@@ -137,7 +134,7 @@ export class PdfService {
             }
 
             this.page.drawImage(image, {
-                x: ((config.pageWidth / 4) * (side === 'right' ? 3 : 1)) - (imageDims.width / 2), // center of right half of page
+                x: ((constants.pageWidth / 4) * (side === 'right' ? 3 : 1)) - (imageDims.width / 2), // center of right half of page
                 y: this.getVerticalCenterOfSection(section, imageDims.height),
                 width: imageDims.width,
                 height: imageDims.height,
@@ -169,6 +166,7 @@ export class PdfService {
         if (backgroundColor) this.drawBackground(side, section, sectionDims);
         if (border) this.drawBorder(options);
 
+        console.log(text);
         const lines = text.split('\n');
         // get total height of lines
         const totalHeight = lines.length * this.font.heightAtSize(textSize);
@@ -177,10 +175,10 @@ export class PdfService {
         let prevConfig;
         for (const line of lines.reverse()) {
             prevConfig = {
-                x: ((config.pageWidth / 4) * (side === 'right' ? 3 : 1)) - (this.font.widthOfTextAtSize(line, textSize) / 2),
+                x: ((constants.pageWidth / 4) * (side === 'right' ? 3 : 1)) - (this.font.widthOfTextAtSize(line, textSize) / 2),
                 y: prevConfig
                     ? (prevConfig.y + this.font.heightAtSize(textSize))
-                    : (this.getVerticalCenterOfSection(section, totalHeight) + config.textOffset),
+                    : (this.getVerticalCenterOfSection(section, totalHeight) + constants.textOffset),
                 font: this.font,
                 size: textSize,
                 color: this.hexToRgb(color),
@@ -192,7 +190,7 @@ export class PdfService {
     drawBackground(side, section, sectionDims) {
         this.page.drawRectangle({
             // TODO: this will only center atm
-            x: (side === 'right' ? config.pageWidth / 2 : 0) + (((config.pageWidth / 2) - sectionDims.width) / 2),
+            x: (side === 'right' ? constants.pageWidth / 2 : 0) + (((constants.pageWidth / 2) - sectionDims.width) / 2),
             y: section.y,
             width: sectionDims.width,
             height: sectionDims.height,
@@ -213,7 +211,7 @@ export class PdfService {
             heightScale,
             scale,
         } = options;
-        const width = (config.pageWidth / 2) - (borderRadius * 2);
+        const width = (constants.pageWidth / 2) - (borderRadius * 2);
         const height = section.height - (borderRadius * 2);
 
         let adjustedWidth, adjustedHeight;
@@ -231,7 +229,7 @@ export class PdfService {
         const yStartingPoint = heightDiff / 2;
         const svgPath = `M${xStartingPoint},${yStartingPoint} h${adjustedWidth} a10,10 0 0 1 10,10 v${adjustedHeight} a10,10 0 0 1 -10,10 h-${adjustedWidth} a10,10 0 0 1 -10,-10 v-${adjustedHeight} a10,10 0 0 1 10,-10 z`;
         this.page.drawSvgPath(svgPath, {
-            x: side === 'right' ? config.pageWidth / 2 : 0,
+            x: side === 'right' ? constants.pageWidth / 2 : 0,
             y: section.y + section.height,
             borderColor: this.hexToRgb(color),
             borderWidth: thickness,

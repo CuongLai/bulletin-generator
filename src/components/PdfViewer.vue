@@ -42,9 +42,8 @@ export default {
     }
   },
   methods: {
-    getPdf() {
+    async getPdf() {
       this.pdfData = pdfvuer.createLoadingTask(this.pdfSrc);
-      // this.pdfData = pdfvuer.createLoadingTask('/assets/test2.pdf');
       this.pdfData.then((pdf) => {
         this.numPages = pdf.numPages;
       });

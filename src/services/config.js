@@ -1,4 +1,6 @@
-const config = {
+import { fitOptions } from './enums';
+
+export const constants = {
     pageWidth: 3300,
     pageHeight: 2550,
     textSize: 75,
@@ -6,6 +8,42 @@ const config = {
     textOffset: 22,
 };
 
-module.exports = {
-    config,
+export const layouts = {
+    captionWithThreeImages: {
+        width: .9,
+        topMargin: 100,
+        bottomMargin: 100,
+        spaceBetween: 50,
+        textHeight: 300,
+        get imageHeight() {
+            return (constants.pageHeight - this.topMargin - this.bottomMargin - (this.spaceBetween * 3) - this.textHeight) / 3;
+        },
+        fit: fitOptions.fillAndCrop,
+        border: true,
+        firstElement: 'text',
+    },
+    captionWithFourImages: {
+        width: .9,
+        topMargin: 100,
+        bottomMargin: 100,
+        spaceBetween: 50,
+        textHeight: 300,
+        get imageHeight() {
+            return (constants.pageHeight - this.topMargin - this.bottomMargin - (this.spaceBetween * 3) - this.textHeight) / 3;
+        },
+        fit: fitOptions.fillAndCrop,
+        border: true,
+        firstElement: 'text'
+    },
+    fullPageImage: {
+        width: .9,
+        topMargin: 100,
+        bottomMargin: 100,
+        get imageHeight() {
+            return constants.pageHeight - this.topMargin;
+        },
+        fit: fitOptions.fill,
+        border: false,
+        firstElement: 'image',
+    },
 }
