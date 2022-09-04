@@ -1,20 +1,37 @@
 <template>
-  <div class="editor">
+  <div class="editor d-flex flex-column">
     <Toolbar @form-submit="onSubmit" />
 
-    <h2>Outside Cover</h2>
-    <div class="row container m-auto">
-      <div class="col-6" v-for="page in pages" :key="page.pageName">
-        <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
+    <div class="d-flex flex-grow-1 align-items-center mx-1">
+      <button @click="() => displayedCover = 'outer'" :disabled="displayedCover === 'outer'" class="btn icon-button">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="flex-grow-1">
+        <div v-if="displayedCover === 'outer'" class="container">
+          <h2>Outside Cover</h2>
+          <div class="row">
+            <div class="col-6" v-for="page in outerPages" :key="page.pageName">
+              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="container">
+          <h2>Inside Cover</h2>
+          <div class="row">
+            <div class="col-6" v-for="page in innerPages" :key="page.pageName">
+              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <button @click="() => displayedCover = 'inner'" :disabled="displayedCover === 'inner'" class="btn icon-button">
+        <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
 
-    <!-- <h2>Inside Cover</h2>
-    <div class="row container m-auto">
-      <div class="col-6" v-for="page in innerPages" :key="page.pageName">
-        <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
-      </div>
-    </div> -->
 
     <Modal v-model="showPreview" :showFooter="false" id="preview">
       <template v-slot:title>Preview</template>
@@ -55,7 +72,8 @@ export default {
     return {
       showPreview: false,
       pdfPreview: undefined,
-      pages: [
+      displayedCover: 'outer',
+      outerPages: [
         {
           pageName: 'backOuter',
           layoutName: 'oneCaptionThreeImages',
@@ -68,6 +86,8 @@ export default {
           cover: 'outer',
           side: 'right',
         },
+      ],
+      innerPages: [
         {
           pageName: 'frontInner',
           layoutName: 'oneCaptionThreeImages',
@@ -84,7 +104,10 @@ export default {
     };
   },
   created() {
-    for (const page of this.pages) {
+    for (const page of this.outerPages) {
+      this.$store.commit('setPageDefaults', { pageName: page.pageName, layoutName: page.layoutName, cover: page.cover, side: page.side })
+    }
+    for (const page of this.innerPages) {
       this.$store.commit('setPageDefaults', { pageName: page.pageName, layoutName: page.layoutName, cover: page.cover, side: page.side })
     }
   },
@@ -129,6 +152,9 @@ export default {
 </script>
 
 <style scoped>
+.editor{
+  height: 100vh;
+}
 ::v-deep(#preview .v-modal) {
   padding: 0;
   width: 100%;
