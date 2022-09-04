@@ -12,7 +12,7 @@
       </div>
 
       <div v-else-if="element === 'image'">
-        <Dropzone @set-image-src="setImage" :name="pageName + i" />
+        <Dropzone @set-image-src="setImage" :name="pageName + i" :pageName="pageName" />
       </div>
     </div>
   </div>
@@ -50,11 +50,7 @@ export default {
       e.preventDefault();
     },
     async setImage(file, name) {
-      if (file) {
-        this.$store.commit('setImage', { pageName: this.pageName, name, file });
-      } else {
-        this.$store.commit('removeImage', { pageName: this.pageName, name });
-      }
+      this.$store.commit('setImageFile', { pageName: this.pageName, name, file });
     },
     setText(text, iterator) {
       this.$store.commit('setText', {

@@ -18,17 +18,26 @@ const store = createStore({
         layoutName,
         text: {},
         images: {},
+        imagePreviews: {},
       });
     },
     setText (state, { pageName, name, text }) {
       state.pages.find(page => page.pageName === pageName).text[name] = text;
     },
-    setImage (state, { pageName, name, file }) {
-      state.pages.find(page => page.pageName === pageName).images[name] = file;
+    setImageFile (state, { pageName, name, file }) {
+      if (file) {
+        state.pages.find(page => page.pageName === pageName).images[name] = file;
+      } else {
+        delete state.pages.find(page => page.pageName === pageName).images[name];
+      }
     },
-    removeImage (state, { pageName, name }) {
-      delete state.pages.find(page => page.pageName === pageName).images[name];
-    }
+    setImagePreview (state, { pageName, name, src }) {
+      if (src) {
+        state.pages.find(page => page.pageName === pageName).imagePreviews[name] = src;
+      } else {
+        delete state.pages.find(page => page.pageName === pageName).imagePreviews[name];
+      }
+    },
   }
 })
 

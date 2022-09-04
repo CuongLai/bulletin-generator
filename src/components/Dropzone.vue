@@ -15,18 +15,26 @@
 
 <script>
 import { useDropzone } from 'vue3-dropzone';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Dropzone',
   props: {
     name: String,
+    pageName: String,
   },
   data() {
     return {
       getRootProps: () => {},
       getInputProps: () => {},
-      previewSrc: undefined,
     }
+  },
+  computed: {
+    ...mapState({
+      previewSrc: function(state) {
+        return state.pages.find(page => page.pageName === this.pageName).imagePreviews[this.name];
+      }
+    })
   },
   created() {
     const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop: this.onDrop })
@@ -44,12 +52,12 @@ export default {
       this.$emit('set-image-src', acceptFiles[0], this.name);
     },
     setImagePreview(imageSrc) {
-      this.previewSrc = imageSrc;
+      this.$store.commit('setImagePreview', { pageName: this.pageName, name: this.name, src: imageSrc });
     },
     clearImagePreview(e) {
       e.preventDefault();
       e.stopPropagation();
-      this.previewSrc = undefined;
+      this.$store.commit('setImagePreview', { pageName: this.pageName, name: this.name });
       this.$emit('set-image-src', undefined, this.name);
     },
   }
