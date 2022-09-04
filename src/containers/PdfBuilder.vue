@@ -1,31 +1,19 @@
 <template>
   <div id="pdf-builder">
-    <div class="row container m-auto">
-      <div class="col-6">
-        <label for="backText" class="form-label">Back text</label>
-        <textarea name="backText" :value="backText" @input="updateBackText" class="form-control" rows="4" />
-
-        <label class="form-label">Back Image 1</label>
-        <Dropzone @set-image-src="setImage" name="backImage1" />
-
-        <label class="form-label">Back Image 2</label>
-        <Dropzone @set-image-src="setImage" name="backImage2" />
-
-        <label class="form-label">Back Image 3</label>
-        <Dropzone @set-image-src="setImage" name="backImage3" />
+    <h3>{{pageName}} Page</h3>
+    <div v-for="(element, i) in layout.elements" :key="i" class="mb-3">
+      <div v-if="element === 'text'">
+        <textarea
+          :name="pageName + 'Text'"
+          :value="text[pageName + i]"
+          @input="event => setText(event.target.value, i)"
+          class="form-control"
+          rows="4"
+        />
       </div>
-      <div class="col-6">
-        <label class="form-label">Logo</label>
-        <Dropzone @set-image-src="setImage" name="logo" />
 
-        <label for="dateText" class="form-label">Date text</label>
-        <input type="text" name="dateText" :value="dateText" @input="updateDateText" class="form-control" />
-
-        <label class="form-label">Front Image</label>
-        <Dropzone @set-image-src="setImage" name="frontImage" />
-
-        <label for="frontText" class="form-label">Front text</label>
-        <textarea name="frontText" class="form-control" rows="4" :value="frontText" @input="updateFrontText" />
+      <div v-else-if="element === 'image'">
+        <Dropzone @set-image-src="setImage" :name="pageName + i" />
       </div>
     </div>
   </div>
@@ -33,6 +21,7 @@
 
 <script>
 import Dropzone from '../components/Dropzone';
+import { layouts } from '../services/config';
 
 import { mapState } from 'vuex';
 
@@ -41,76 +30,51 @@ export default {
   components: {
     Dropzone,
   },
-  // data() {
-  //   return {
-  //     frontText: '',
-  //     dateText: '',
-  //     backText: '',
-  //   }
-  // },
+  props: {
+    pageName: String,
+    pageNumber: Number,
+    layoutName: String,
+  },
+  data() {
+    return {
+      layout: layouts[this.layoutName],
+    };
+  },
   computed: {
     ...mapState({
-      frontText: state => state.frontText,
-      dateText: state => state.dateText,
-      backText: state => state.backText,
+      text: function(state) {
+        console.log(this.pageName);
+        
+        return state.pages.find(page => page.pageName === this.pageName).text
+      }
     })
+  },
+  created() {
+    // TODO: move this to Editor
+    this.$store.commit('setPageDefaults', { pageName: this.pageName, layoutName: this.layoutName, pageNumber: this.pageNumber })
   },
   methods: {
     async onSave(e) {
       e.preventDefault();
     },
     async setImage(file, name) {
-      this.$emit('set-image', file, name);
+      if (file) {
+        this.$store.commit('setImage', { pageName: this.pageName, name, file });
+      } else {
+        this.$store.commit('removeImage', { pageName: this.pageName, name });
+      }
     },
-    updateBackText(e) {
-      this.$store.commit('setBackText', e.target.value);
+    setText(text, iterator) {
+      this.$store.commit('setText', {
+        pageName: this.pageName,
+        name: this.pageName + iterator,
+        text,
+      });
     },
-    updateFrontText(e) {
-      this.$store.commit('setFrontText', e.target.value);
-    },
-    updateDateText(e) {
-      this.$store.commit('setDateText', e.target.value);
-    }
-    // getTextColor(themeColor) {
-    //   return isDarkColor(themeColor) ? 'ffffff' : '000000';
-    // },
-    // async onSubmit(themeColor) {
-    //   if (!this.frontText) {
-    //     alert('Please enter front text');
-    //     return;
-    //   }
-
-    //   if (!this.backText) {
-    //     alert('Please enter backText text');
-    //     return;
-    //   }
-
-    //   // TODO: images validation
-    //   const textColor = this.getTextColor(themeColor);
-    //   const project = new Project(themeColor.substring(1), layouts.captionWithThreeImages);
-
-    //   const sections = [
-    //     ...project.buildFrontPageSections(this.frontText, this.dateText, textColor, this.images),
-    //     project.buildTextSection(this.backText, 'left', '000000'),
-    //     project.buildImageSection(this.images['backImage1'], 'left'),
-    //     project.buildImageSection(this.images['backImage2'], 'left'),
-    //     project.buildImageSection(this.images['backImage3'], 'left'),
-    //   ];
-
-    //   this.pdfPreview = undefined;
-    //   const arrayBuffer = await generatePdf(sections);
-    //   this.pdfPreview = URL.createObjectURL(new Blob([arrayBuffer], {
-    //     type: "application/pdf"
-    //   }));
-    //   this.showPreview = true;
-    // },
   },
 }
 </script>
 
 <style scoped>
 
-#download-button {
-  color: black;
-}
 </style>

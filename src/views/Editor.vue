@@ -2,7 +2,14 @@
   <div class="editor">
     <Toolbar @form-submit="onSubmit" />
 
-    <PdfBuilder @set-image="setImage" />
+    <div class="row container m-auto">
+      <div class="col-6">
+        <PdfBuilder layoutName="oneCaptionThreeImages" pageName="Back" :pageNumber="2" />
+      </div>
+      <div class="col-6">
+        <PdfBuilder layoutName="frontPage" pageName="Front" :pageNumber="1" />
+      </div>
+    </div>
 
     <Modal v-model="showPreview" :showFooter="false" id="preview">
       <template v-slot:title>Preview</template>
@@ -27,11 +34,9 @@ import PdfBuilder from '@/containers/PdfBuilder.vue'
 import Toolbar from '@/components/Toolbar.vue'
 import Modal from '../components/Modal';
 import PdfViewer from '../components/PdfViewer';
-import isDarkColor from 'is-dark-color';
 
 import { generatePdf } from '../services/api';
-import { Project } from '../services/project';
-import { layouts } from '../services/config';
+import { Page } from '../services/page';
 
 export default {
   name: 'Editor',
@@ -43,11 +48,8 @@ export default {
   },
   data() {
     return {
-      outerCoverData: {},
-      innerCoverData: {},
       showPreview: false,
       pdfPreview: undefined,
-      images: {},
     };
   },
   methods: {
@@ -55,36 +57,27 @@ export default {
       e.preventDefault();
       this.showPreview = !this.showPreview;
     },
-    setOuterCoverData(data) {
-      this.outerCoverData = data;
-    },
-    setInnerCoverData(data) {
-      this.innerCoverData = data;
-    },
-    getTextColor(themeColor) {
-      return isDarkColor(themeColor) ? 'ffffff' : '000000';
-    },
-    async setImage(file, name) {
-      if (file) {
-        this.images[name] = file;
-      } else {
-        delete this.images[name];
-      }
-    },
     async onSubmit(themeColor) {
-      console.log(this.images['backImage1']);
-      const textColor = this.getTextColor(themeColor);
-      const project = new Project(themeColor.substring(1), layouts.captionWithThreeImages);
-      const { frontText, dateText, backText } = this.$store.state;
-      console.log(frontText);
+      const { pages } = this.$store.state;
+      pages.sort((a, b) => a.pageNumber - b.pageNumber);
 
-      const sections = [
-        ...project.buildFrontPageSections(frontText, dateText, textColor, this.images),
-        project.buildTextSection(backText, 'left', '000000'),
-        project.buildImageSection(this.images['backImage1'], 'left'),
-        project.buildImageSection(this.images['backImage2'], 'left'),
-        project.buildImageSection(this.images['backImage3'], 'left'),
-      ];
+      let sections = [];
+
+      for (const pageData of pages) {
+        const page = new Page(themeColor.substring(1), pageData.layoutName);
+        if (pageData.layoutName === 'frontPage') {
+          sections = [...sections, ...page.buildFrontPageSections(pageData)];
+        } else {
+          for (let i = 0; i < page.layout.elements.length; i++) {
+            const element = page.layout.elements[i];
+            if (element === 'text') {
+              sections.push(page.buildTextSection(pageData.text[pageData.pageName + i], 'left', '000000'));
+            } else if (element === 'image') {
+              sections.push(page.buildImageSection(pageData.images[pageData.pageName + i], 'left'));
+            }
+          }
+        }
+      }
 
       this.pdfPreview = undefined;
       const arrayBuffer = await generatePdf(sections);
@@ -93,7 +86,7 @@ export default {
       }));
       this.showPreview = true;
     },
-  }
+  },
 }
 </script>
 

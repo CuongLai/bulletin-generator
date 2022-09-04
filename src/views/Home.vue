@@ -27,6 +27,7 @@ export default {
       this.showModal = !this.showModal;
     },
     confirm() {
+      this.$store.commit('resetForm');
       this.$router.push('/edit');
     },
     cancel(close) {

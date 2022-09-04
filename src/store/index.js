@@ -3,21 +3,31 @@ import { createStore } from 'vuex'
 const store = createStore({
   state () {
     return {
-      frontText: 'fronttext',
-      dateText: 'datetext',
-      backText: 'backtext',
+      pages: [],
     }
   },
   mutations: {
-    setFrontText (state, text) {
-      state.frontText = text
+    resetForm (state) {
+      state.pages = [];
     },
-    setDateText (state, text) {
-      state.dateText = text
+    setPageDefaults (state, { pageName, layoutName, pageNumber }) {
+      state.pages.push({
+        pageName,
+        pageNumber,
+        layoutName,
+        text: {},
+        images: {},
+      });
     },
-    setBackText (state, text) {
-      state.backText = text
+    setText (state, { pageName, name, text }) {
+      state.pages.find(page => page.pageName === pageName).text[name] = text;
     },
+    setImage (state, { pageName, name, file }) {
+      state.pages.find(page => page.pageName === pageName).images[name] = file;
+    },
+    removeImage (state, { pageName, name }) {
+      delete state.pages.find(page => page.pageName === pageName).images[name];
+    }
   }
 })
 

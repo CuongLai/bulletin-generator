@@ -1,19 +1,25 @@
-const { constants } = require('./config');
+const { constants, layouts } = require('./config');
+const isDarkColor = require('is-dark-color');
 
-export class Project {
-    constructor(themeColor, layout) {
+export class Page {
+    constructor(themeColor, layoutName) {
         this.themeColor = themeColor;
-        this.layout = layout;
+        this.layout = layouts[layoutName];
     }
 
-    buildFrontPageSections(frontText, dateText, dateTextColor, images) {
+    getTextColor() {
+      return isDarkColor(this.themeColor) ? 'ffffff' : '000000';
+    }
+
+    buildFrontPageSections(pageData) {
         // TODO: validation on images
+        const { text, images, pageName } = pageData;
 
         return [
             {
                 type: 'image',
                 options: {
-                    file: images['logo'],
+                    file: images[`${pageName}0`], // logo
                     maxWidth: constants.pageWidth / 2,
                     maxHeight: 426,
                     side: 'right',
@@ -25,8 +31,8 @@ export class Project {
             {
                 type: 'text',
                 options: {
-                    text: dateText,
-                    color: dateTextColor,
+                    text: text[`${pageName}1`],
+                    color: this.getTextColor(),
                     side: 'right',
                     textSize: 66.67,
                     section: {
@@ -38,7 +44,7 @@ export class Project {
             {
                 type: 'image',
                 options: {
-                    file: images['frontImage'],
+                    file: images[`${pageName}2`],
                     maxWidth: 1440,
                     maxHeight: 1100,
                     side: 'right',
@@ -50,7 +56,7 @@ export class Project {
             {
                 type: 'text',
                 options: {
-                    text: frontText,
+                    text: text[`${pageName}3`],
                     color: this.themeColor,
                     side: 'right',
                     textSize: constants.textSize,

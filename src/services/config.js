@@ -9,7 +9,15 @@ export const constants = {
 };
 
 export const layouts = {
-    captionWithThreeImages: {
+    frontPage: {
+        elements: [
+            'image',
+            'text',
+            'image',
+            'text',
+        ],
+    },
+    oneCaptionThreeImages: {
         width: .9,
         topMargin: 100,
         bottomMargin: 100,
@@ -21,19 +29,31 @@ export const layouts = {
         fit: fitOptions.fillAndCrop,
         border: true,
         firstElement: 'text',
+        elements: [
+            'text',
+            'image',
+            'image',
+            'image'
+        ],
     },
-    captionWithFourImages: {
+    oneCaptionFourImages: {
         width: .9,
         topMargin: 100,
         bottomMargin: 100,
         spaceBetween: 50,
         textHeight: 300,
         get imageHeight() {
-            return (constants.pageHeight - this.topMargin - this.bottomMargin - (this.spaceBetween * 3) - this.textHeight) / 3;
+            return (constants.pageHeight - this.topMargin - this.bottomMargin - (this.spaceBetween * 4) - this.textHeight) / 4;
         },
         fit: fitOptions.fillAndCrop,
         border: true,
-        firstElement: 'text'
+        firstElement: 'text',
+        elements: [
+            'text',
+            'image',
+            'image',
+            'image'
+        ],
     },
     fullPageImage: {
         width: .9,
@@ -45,5 +65,6 @@ export const layouts = {
         fit: fitOptions.fill,
         border: false,
         firstElement: 'image',
+        numImages: 1,
     },
 }
