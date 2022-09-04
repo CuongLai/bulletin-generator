@@ -12,7 +12,7 @@
           <h2>Outside Cover</h2>
           <div class="row">
             <div class="col-6" v-for="page in outerPages" :key="page.pageName">
-              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
+              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" :cover="page.cover" :side="page.side" />
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@
           <h2>Inside Cover</h2>
           <div class="row">
             <div class="col-6" v-for="page in innerPages" :key="page.pageName">
-              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" />
+              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" :cover="page.cover" :side="page.side" />
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default {
       outerPages: [
         {
           pageName: 'backOuter',
-          layoutName: 'oneCaptionThreeImages',
+          layoutName: 'none',
           cover: 'outer',
           side: 'left',
         },
@@ -90,26 +90,18 @@ export default {
       innerPages: [
         {
           pageName: 'frontInner',
-          layoutName: 'oneCaptionThreeImages',
+          layoutName: 'none',
           cover: 'inner',
           side: 'left',
         },
         {
           pageName: 'backInner',
-          layoutName: 'oneCaptionThreeImages',
+          layoutName: 'none',
           cover: 'inner',
           side: 'right',
         },
       ]
     };
-  },
-  created() {
-    for (const page of this.outerPages) {
-      this.$store.commit('setPageDefaults', { pageName: page.pageName, layoutName: page.layoutName, cover: page.cover, side: page.side })
-    }
-    for (const page of this.innerPages) {
-      this.$store.commit('setPageDefaults', { pageName: page.pageName, layoutName: page.layoutName, cover: page.cover, side: page.side })
-    }
   },
   methods: {
     async togglePreview(e) {
@@ -128,7 +120,7 @@ export default {
         const page = new Page(themeColor.substring(1), pageData.layoutName);
         if (pageData.layoutName === 'frontPage') {
           sections.outer = [...sections.outer, ...page.buildFrontPageSections(pageData)];
-        } else {
+        } else if (pageData.layoutName !== 'none') {
           for (let i = 0; i < page.layout.elements.length; i++) {
             const element = page.layout.elements[i];
             if (element === 'text') {

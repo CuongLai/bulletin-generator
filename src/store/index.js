@@ -11,15 +11,21 @@ const store = createStore({
       state.pages = [];
     },
     setPageDefaults (state, { pageName, layoutName, cover, side }) {
-      state.pages.push({
-        pageName,
-        cover,
-        side,
-        layoutName,
-        text: {},
-        images: {},
-        imagePreviews: {},
-      });
+      if (!state.pages.find(page => page.pageName === pageName)) {
+        console.log('initializing');
+        state.pages.push({
+          pageName,
+          cover,
+          side,
+          layoutName,
+          text: {},
+          images: {},
+          imagePreviews: {},
+        });
+      }
+    },
+    setLayoutName(state, { pageName, layoutName }) {
+      state.pages.find(page => page.pageName === pageName).layoutName = layoutName;
     },
     setText (state, { pageName, name, text }) {
       state.pages.find(page => page.pageName === pageName).text[name] = text;
