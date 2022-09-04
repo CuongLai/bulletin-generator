@@ -10,10 +10,11 @@ const store = createStore({
     resetForm (state) {
       state.pages = [];
     },
-    setPageDefaults (state, { pageName, layoutName, pageNumber }) {
+    setPageDefaults (state, { pageName, layoutName, cover, side }) {
       state.pages.push({
         pageName,
-        pageNumber,
+        cover,
+        side,
         layoutName,
         text: {},
         images: {},

@@ -1,6 +1,5 @@
 <template>
   <div id="pdf-builder">
-    <h3>{{pageName}} Page</h3>
     <div v-for="(element, i) in layout.elements" :key="i" class="mb-3">
       <div v-if="element === 'text'">
         <textarea
@@ -32,7 +31,6 @@ export default {
   },
   props: {
     pageName: String,
-    pageNumber: Number,
     layoutName: String,
   },
   data() {
@@ -43,15 +41,9 @@ export default {
   computed: {
     ...mapState({
       text: function(state) {
-        console.log(this.pageName);
-        
         return state.pages.find(page => page.pageName === this.pageName).text
       }
     })
-  },
-  created() {
-    // TODO: move this to Editor
-    this.$store.commit('setPageDefaults', { pageName: this.pageName, layoutName: this.layoutName, pageNumber: this.pageNumber })
   },
   methods: {
     async onSave(e) {

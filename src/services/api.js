@@ -4,17 +4,13 @@ const { PdfService } = require('./pdfService');
 const { constants } = require('./config');
 const path = require('path');
 
-async function generatePdf(firstPageSections) {
+async function generatePdf(outerSections, innerSections) {
     const pdfService = new PdfService();
     await pdfService.setUpPdf();
 
-    // const frontCoverSections = [
-    //     ...suppliedSections
-    // ];
-
     const pages = [
-        firstPageSections,
-        firstPageSections,
+        outerSections,
+        innerSections,
     ];
 
     try {
