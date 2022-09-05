@@ -4,7 +4,7 @@ const isDarkColor = require('is-dark-color');
 export class Page {
     constructor(themeColor, layoutName) {
         this.themeColor = themeColor;
-        this.layout = layouts[layoutName];
+        this.layout = layouts.find(l => l.name === layoutName);
     }
 
     getTextColor() {
@@ -94,7 +94,7 @@ export class Page {
                     borderRadius: 10,
                 } : null,
                 section: {
-                    yOffset: this.layout.firstElement === 'image' ? this.layout.topMargin : this.layout.spaceBetween,
+                    yOffset: this.layout.elements[0] === 'image' ? this.layout.topMargin : this.layout.spaceBetween,
                     height: this.layout.imageHeight,
                 },
             },
@@ -116,7 +116,7 @@ export class Page {
                     borderRadius: 10,
                 } : null,
                 section: {
-                    yOffset: this.layout.firstElement === 'text' ? this.layout.topMargin : this.layout.spaceBetween,
+                    yOffset: this.layout.elements[0] === 'text' ? this.layout.topMargin : this.layout.spaceBetween,
                     height: this.layout.textHeight,
                 },
             },

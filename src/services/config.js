@@ -8,8 +8,10 @@ export const constants = {
     textOffset: 22,
 };
 
-export const layouts = {
-    frontPage: {
+export const layouts = [
+    {
+        name: 'frontPage',
+        description: 'Front page',
         elements: [
             'image',
             'text',
@@ -17,7 +19,9 @@ export const layouts = {
             'text',
         ],
     },
-    oneCaptionThreeImages: {
+    {
+        name: 'oneCaptionThreeImages',
+        description: 'Three images with one caption',
         width: .9,
         topMargin: 100,
         bottomMargin: 100,
@@ -28,7 +32,6 @@ export const layouts = {
         },
         fit: fitOptions.fillAndCrop,
         border: true,
-        firstElement: 'text',
         elements: [
             'text',
             'image',
@@ -36,7 +39,9 @@ export const layouts = {
             'image'
         ],
     },
-    oneCaptionFourImages: {
+    {
+        name: 'oneCaptionFourImages',
+        description: 'Four images with one caption',
         width: .9,
         topMargin: 100,
         bottomMargin: 100,
@@ -47,24 +52,27 @@ export const layouts = {
         },
         fit: fitOptions.fillAndCrop,
         border: true,
-        firstElement: 'text',
         elements: [
             'text',
             'image',
             'image',
-            'image'
+            'image',
+            'image',
         ],
     },
-    fullPageImage: {
+    {
+        name: 'fullPageImage',
+        description: 'Full page image',
         width: .9,
         topMargin: 100,
         bottomMargin: 100,
         get imageHeight() {
-            return constants.pageHeight - this.topMargin;
+            return constants.pageHeight - this.topMargin - this.bottomMargin;
         },
         fit: fitOptions.fill,
         border: false,
-        firstElement: 'image',
-        numImages: 1,
+        elements: [
+            'image',
+        ],
     },
-}
+]

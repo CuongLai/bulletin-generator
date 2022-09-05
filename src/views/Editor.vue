@@ -8,20 +8,20 @@
       </button>
 
       <div class="flex-grow-1">
-        <div v-if="displayedCover === 'outer'" class="container">
+        <div v-if="displayedCover === 'outer'" class="container page-container">
           <h2>Outside Cover</h2>
-          <div class="row">
+          <div class="row flex-grow-1">
             <div class="col-6" v-for="page in outerPages" :key="page.pageName">
-              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" :cover="page.cover" :side="page.side" />
+              <PdfBuilder :pageConfig="page" />
             </div>
           </div>
         </div>
 
-        <div v-else class="container">
+        <div v-else class="container page-container">
           <h2>Inside Cover</h2>
-          <div class="row">
+          <div class="row flex-grow-1">
             <div class="col-6" v-for="page in innerPages" :key="page.pageName">
-              <PdfBuilder :layoutName="page.layoutName" :pageName="page.pageName" :cover="page.cover" :side="page.side" />
+              <PdfBuilder :pageConfig="page" />
             </div>
           </div>
         </div>
@@ -79,12 +79,14 @@ export default {
           layoutName: 'none',
           cover: 'outer',
           side: 'left',
+          lockLayout: false,
         },
         {
           pageName: 'frontOuter',
           layoutName: 'frontPage',
           cover: 'outer',
           side: 'right',
+          lockLayout: true,
         },
       ],
       innerPages: [
@@ -93,12 +95,14 @@ export default {
           layoutName: 'none',
           cover: 'inner',
           side: 'left',
+          lockLayout: false,
         },
         {
           pageName: 'backInner',
           layoutName: 'none',
           cover: 'inner',
           side: 'right',
+          lockLayout: false,
         },
       ]
     };
@@ -146,6 +150,11 @@ export default {
 <style scoped>
 .editor{
   height: 100vh;
+}
+.page-container {
+  height: 700px;
+  display: flex;
+  flex-direction: column;
 }
 ::v-deep(#preview .v-modal) {
   padding: 0;
