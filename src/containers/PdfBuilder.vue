@@ -18,11 +18,21 @@
         </div>
       </div>
     </div>
-    <div v-else class="no-layout">
-      <div class="d-flex flex-column align-items-center justify-content-center">
+    <div v-else >
+      <div v-for="(section, i) in sections" :key="i" class="d-flex mb-3">
+        <Section
+          v-for="(element, j) in section"
+          :key="j"
+          :pageName="pageConfig.pageName"
+          :name="pageConfig.pageName + i + '_' + j"
+          @type-selected="(type) => addSection(i, j, type)"
+        />
+      </div>
+
+      <!-- <div class="d-flex flex-column align-items-center justify-content-center">
         Blank page
         <button @click="toggleShowLayouts" class="btn mt-2">Choose Layout</button>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -42,6 +52,7 @@
 <script>
 import Dropzone from '../components/Dropzone';
 import Modal from '../components/Modal';
+import Section from '../components/Section';
 import { layouts } from '../services/config';
 
 export default {
@@ -49,6 +60,7 @@ export default {
   components: {
     Dropzone,
     Modal,
+    Section,
   },
   props: {
     pageConfig: Object,
@@ -60,6 +72,9 @@ export default {
       showLayouts: false,
       layouts,
       selectedLayout: undefined,
+      rowMaxCount: 5,
+      columnMaxCount: 4,
+      sections: [[undefined]],
     };
   },
   created() {
@@ -91,6 +106,15 @@ export default {
         text,
       });
     },
+    addSection(row, column, type) {
+      this.sections[row][column] = type;
+      if (this.sections[row].length < this.columnMaxCount) {
+        this.sections[row].push(undefined);
+      }
+      if (this.sections[this.sections.length - 1].length > 1 && this.sections.length < this.rowMaxCount) {
+        this.sections.push([undefined]);
+      }
+    }
   },
 }
 </script>
@@ -101,5 +125,8 @@ export default {
   display: flex;
   justify-content: center;
   background-color: #e0e0e0;
+}
+.sections {
+  display: flex;
 }
 </style>

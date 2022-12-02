@@ -12,7 +12,6 @@ const store = createStore({
     },
     setPageDefaults (state, { pageName, layoutName, cover, side }) {
       if (!state.pages.find(page => page.pageName === pageName)) {
-        console.log('initializing');
         state.pages.push({
           pageName,
           cover,
@@ -28,7 +27,11 @@ const store = createStore({
       state.pages.find(page => page.pageName === pageName).layoutName = layoutName;
     },
     setText (state, { pageName, name, text }) {
-      state.pages.find(page => page.pageName === pageName).text[name] = text;
+      if (text) {
+        state.pages.find(page => page.pageName === pageName).text[name] = text;
+      } else {
+        delete state.pages.find(page => page.pageName === pageName).text[name];
+      }
     },
     setImageFile (state, { pageName, name, file }) {
       if (file) {

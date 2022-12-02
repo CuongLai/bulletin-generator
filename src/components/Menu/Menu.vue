@@ -1,9 +1,7 @@
 <template>
-  <div >
   <slot name="toggle-button" :toggle="toggle"></slot>
   <div class="menu" v-if="showMenu" v-click-outside="() => showMenu = false">
     <slot name="dropdown-items" :toggle="toggle"></slot>
-  </div>
   </div>
 </template>
 
@@ -21,7 +19,6 @@ const clickOutside = {
     }, 100)
   },
   unmounted: function (el) {
-    console.log('unmounted');
     document.body.removeEventListener('click', el.clickOutsideEvent)
   },
 }
@@ -35,7 +32,6 @@ export default {
   },
   methods: {
     toggle() {
-      console.log('toggle')
       this.showMenu = !this.showMenu;
     }
   },
